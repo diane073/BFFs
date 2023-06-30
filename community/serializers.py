@@ -238,7 +238,6 @@ class MyCommunityInfoSerializer(serializers.ModelSerializer):
             .values("created_at")
             .last()
         )
-        print(grouppurchase, "💌")
         date_format = "%Y-%m-%d %H:%M:%S"
         if not feed and not grouppurchase:
             return "아직 활동이 없습니다"

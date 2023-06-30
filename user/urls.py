@@ -33,7 +33,7 @@ urlpatterns = [
     path("profile/", ProfileView.as_view(), name="profile_view"),
     path("<int:user_id>/", ProfileDetailView.as_view(), name="profile_detail_view"),
     path(
-        "<int:profile_id>/community/",
+        "mycommunity/",
         ProfileMyCommunityView.as_view(),
         name="profile_my_comu_view",
     ),

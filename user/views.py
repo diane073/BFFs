@@ -376,7 +376,7 @@ class ProfileMyCommunityView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, profile_id):
+    def get(self, request):
         user_id = request.user.id
         profile = Profile.objects.get(user_id=user_id)
         profile_serializer = UserProfileSerializer(profile)
