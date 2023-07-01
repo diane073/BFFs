@@ -3,6 +3,7 @@ from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db import transaction
+from django.db.models import Prefetch
 from rest_framework.pagination import PageNumberPagination
 from community.models import Community, CommunityAdmin, ForbiddenWord
 from community.serializers import (
@@ -445,24 +446,38 @@ class GroupPurchaseCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, community_url):
-        community = get_object_or_404(Community, communityurl=community_url)
-        category = get_object_or_404(
-            Category, community=community, category_url="groupbuy"
+        """공구 수정 데이터 get"""
+        community = get_object_or_404(
+            Community.objects.prefetch_related(
+                Prefetch(
+                    "community_category",
+                    queryset=Category.objects.filter(category_url="groupbuy"),
+                    to_attr="category",
+                )
+            ),
+            communityurl=community_url,
         )
+        print("🐛", community.category[0].id)
         grouppruchase = GroupPurchase.objects.filter(
-            community_id=community.id, category_id=category.id
+            community_id=community, category=community.category[0].id
         )
         serializer = GroupPurchaseCreateSerializer(grouppruchase, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, community_url):
         serializer = GroupPurchaseCreateSerializer(data=request.data)
-        community = get_object_or_404(Community, communityurl=community_url)
-        category = get_object_or_404(
-            Category, community=community, category_url="groupbuy"
+        community = get_object_or_404(
+            Community.objects.prefetch_related(
+                Prefetch(
+                    "community_category",
+                    queryset=Category.objects.filter(category_url="groupbuy"),
+                    to_attr="category",
+                )
+            ),
+            communityurl=community_url,
         )
         forbidden_word = ForbiddenWord.objects.filter(
-            community_id=category.community.id
+            community_id=community.id
         ).values_list("word", flat=True)
         for word in forbidden_word:
             if word in request.data["content"] or word in request.data["title"]:
@@ -472,7 +487,9 @@ class GroupPurchaseCreateView(APIView):
                 )
         if serializer.is_valid():
             serializer.validate_datetime(request.data)
-            serializer.save(community=community, category=category, user=request.user)
+            serializer.save(
+                community=community, category=community.category[0], user=request.user
+            )
             return Response(
                 {"message": "공동구매 게시글이 작성되었습니다"}, status=status.HTTP_201_CREATED
             )

@@ -21,7 +21,6 @@ from rest_framework_simplejwt.views import TokenViewBase
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from .models import User, Profile, GuestBook, Verify
-from feed.models import GroupPurchase
 from .serializers import (
     UserCreateSerializer,
     UserDelSerializer,
@@ -317,8 +316,8 @@ class ProfileDetailView(APIView):
             .prefetch_related("grouppurchase")
             .all()
         )
-        joined_grouppurchase = GroupPurchase.objects.filter(id__in=joined).order_by(
-            "-created_at"
+        joined_grouppurchase = sorted(
+            [j.grouppurchase for j in joined], key=lambda x: x.created_at, reverse=True
         )
         joined_grouppurchase_serializer = ProfileGrouppurchaseSerializer(
             joined_grouppurchase, many=True
@@ -385,7 +384,7 @@ class ProfileMyCommunityView(APIView):
             .select_related("community")
             .all()
         )
-        community_info = Community.objects.filter(id__in=community)
+        community_info = [c.community for c in community]
         community_serializer = MyCommunityInfoSerializer(community_info, many=True)
         return Response(
             {
