@@ -127,10 +127,4 @@ urlpatterns = [
         GroupPurchaseCommentView.as_view(),
         name="purchase_comment_create_view",
     ),
-    # grouppurchase comment 수정 삭제
-    path(
-        "<str:community_url>/purchasecomment/<int:purchase_comment_id>/",
-        GroupPurchaseCommentView.as_view(),
-        name="purchase_comment_put_delete_view",
-    ),
 ]

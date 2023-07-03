@@ -6,6 +6,7 @@ from .views import (
     CommentView,
     CocommentView,
     CocommentView,
+    GroupPurchaseCommentView,
     ImageUploadAndDeleteView,
     FeedNotificationView,
     LikeView,
@@ -47,6 +48,12 @@ urlpatterns = [
         "cocomment/<int:cocomment_id>/",
         CocommentView.as_view(),
         name="cocomment_put_delete_view",
+    ),
+    # grouppurchase comment 수정 삭제
+    path(
+        "purchasecomment/<int:purchase_comment_id>/",
+        GroupPurchaseCommentView.as_view(),
+        name="purchase_comment_put_delete_view",
     ),
     path("image/upload/", ImageUploadAndDeleteView.as_view(), name="image_upload_view"),
 ]
