@@ -238,7 +238,11 @@ class FeedNextView(APIView):
         ).order_by("created_at")
         if not feed_list:
             return Response({"message": "다음 게시글이 없습니다"})
-        return redirect("feed_detail_view", community_url, feed_list.first().id)
+        return Response(
+            community_url=community_url,
+            feed_id=feed_list.first().id,
+            status=status.HTTP_200_OK,
+        )
 
 
 class FeedPrevView(APIView):
@@ -251,4 +255,8 @@ class FeedPrevView(APIView):
         ).order_by("-created_at")
         if not feed_list:
             return Response({"message": "이전 게시글이 없습니다"})
-        return redirect("feed_detail_view", community_url, feed_list.first().id)
+        return Response(
+            community_url=community_url,
+            feed_id=feed_list.first().id,
+            status=status.HTTP_200_OK,
+        )
