@@ -90,9 +90,7 @@ class CommentView(APIView):
         forbidden_word = ForbiddenWord.objects.filter(
             community__community_category__feed_category__id=feed_id
         ).values_list("word", flat=True)
-        if not forbidden_word:
-            pass
-        else:
+        if forbidden_word:
             for word in forbidden_word:
                 if word in request.data["text"]:
                     return Response(
@@ -122,9 +120,7 @@ class CommentView(APIView):
             forbidden_word = ForbiddenWord.objects.filter(
                 community__community_category__feed_category__comment__id=comment_id
             ).values_list("word", flat=True)
-            if not forbidden_word:
-                pass
-            else:
+            if forbidden_word:
                 for word in forbidden_word:
                     if word in request.data["text"]:
                         return Response(
@@ -171,9 +167,7 @@ class CocommentView(APIView):
         forbidden_word = ForbiddenWord.objects.filter(
             community__community_category__feed_category__comment__id=comment_id
         ).values_list("word", flat=True)
-        if not forbidden_word:
-            pass
-        else:
+        if forbidden_word:
             for word in forbidden_word:
                 if word in request.data["text"]:
                     return Response(
@@ -196,9 +190,7 @@ class CocommentView(APIView):
             forbidden_word = ForbiddenWord.objects.filter(
                 community__community_category__feed_category__comment__cocomment__id=cocomment_id
             ).values_list("word", flat=True)
-            if not forbidden_word:
-                pass
-            else:
+            if forbidden_word:
                 for word in forbidden_word:
                     if word in request.data["text"]:
                         return Response(
@@ -369,9 +361,7 @@ class FeedDetailView(APIView):
             forbidden_word = ForbiddenWord.objects.filter(
                 community_id=feed.category.community.id
             ).values_list("word", flat=True)
-            if not forbidden_word:
-                pass
-            else:
+            if forbidden_word:
                 for word in forbidden_word:
                     if word in request.data["content"] or word in request.data["title"]:
                         return Response(
@@ -412,9 +402,7 @@ class FeedCreateView(APIView):
         forbidden_word = ForbiddenWord.objects.filter(
             community_id=category.community.id
         ).values_list("word", flat=True)
-        if not forbidden_word:
-            pass
-        else:
+        if forbidden_word:
             for word in forbidden_word:
                 if word in request.data["content"] or word in request.data["title"]:
                     return Response(
@@ -536,9 +524,7 @@ class GroupPurchaseCreateView(APIView):
         forbidden_word = ForbiddenWord.objects.filter(
             community_id=community.id
         ).values_list("word", flat=True)
-        if not forbidden_word:
-            pass
-        else:
+        if forbidden_word:
             for word in forbidden_word:
                 if word in request.data["content"] or word in request.data["title"]:
                     return Response(
@@ -597,9 +583,7 @@ class GroupPurchaseDetailView(APIView):
         forbidden_word = ForbiddenWord.objects.filter(
             community=purchasefeed.community
         ).values_list("word", flat=True)
-        if not forbidden_word:
-            pass
-        else:
+        if forbidden_word:
             for word in forbidden_word:
                 if word in request.data["content"] or word in request.data["title"]:
                     return Response(
@@ -791,9 +775,7 @@ class GroupPurchaseCommentView(APIView):
         forbidden_word = ForbiddenWord.objects.filter(
             community__purchase_community__id=grouppurchase_id
         ).values_list("word", flat=True)
-        if not forbidden_word:
-            pass
-        else:
+        if forbidden_word:
             for word in forbidden_word:
                 if word in request.data["text"]:
                     return Response(
@@ -815,9 +797,7 @@ class GroupPurchaseCommentView(APIView):
         forbidden_word = ForbiddenWord.objects.filter(
             community__purchase_community__p_comment__id=purchase_comment_id
         ).values_list("word", flat=True)
-        if not forbidden_word:
-            pass
-        else:
+        if forbidden_word:
             for word in forbidden_word:
                 if word in request.data["text"]:
                     return Response(
