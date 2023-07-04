@@ -1,4 +1,5 @@
 from datetime import datetime
+from pytz import timezone
 from rest_framework import serializers
 
 from community.models import Community
@@ -317,9 +318,9 @@ class GroupPurchaseListSerializer(serializers.ModelSerializer):
 
     def get_grouppurchase_status(self, obj):
         """공구 게시글 상태 check"""
-        now = datetime.now()
+        now = datetime.now(timezone("Asia/Seoul"))
         is_ended = obj.is_ended
-        open_at = datetime.strptime(str(obj.open_at), "%Y-%m-%d %H:%M:%S")
+        open_at = datetime.strptime(str(obj.open_at), "%Y-%m-%d %H:%M:%S%z")
         if not obj.close_at:
             if is_ended:
                 return "종료"
@@ -327,9 +328,8 @@ class GroupPurchaseListSerializer(serializers.ModelSerializer):
                 return "시작 전"
             elif not is_ended and open_at < now:
                 return "진행 중"
-
         else:
-            close_at = datetime.strptime(str(obj.close_at), "%Y-%m-%d %H:%M:%S")
+            close_at = datetime.strptime(str(obj.open_at), "%Y-%m-%d %H:%M:%S%z")
             if is_ended:
                 return "종료"
             elif close_at < now:
@@ -359,9 +359,9 @@ class GroupPurchaseDetailSerializer(serializers.ModelSerializer):
 
     def get_grouppurchase_status(self, obj):
         """공구 게시글 상태 check"""
-        now = datetime.now()
+        now = datetime.now(timezone("Asia/Seoul"))
         is_ended = obj.is_ended
-        open_at = datetime.strptime(str(obj.open_at), "%Y-%m-%d %H:%M:%S")
+        open_at = datetime.strptime(str(obj.open_at), "%Y-%m-%d %H:%M:%S%z")
         if not obj.close_at:
             if is_ended:
                 return "종료"
@@ -370,7 +370,7 @@ class GroupPurchaseDetailSerializer(serializers.ModelSerializer):
             elif not is_ended and open_at < now:
                 return "진행 중"
         else:
-            close_at = datetime.strptime(str(obj.close_at), "%Y-%m-%d %H:%M:%S")
+            close_at = datetime.strptime(str(obj.close_at), "%Y-%m-%d %H:%M:%S%z")
             if is_ended:
                 return "종료"
             elif close_at < now:
