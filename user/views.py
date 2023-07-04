@@ -351,7 +351,9 @@ class ProfileDetailView(APIView):
                     {"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
                 )
         else:
-            return Response({"message": "권한이 없습니다!"}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"message": "권한이 없습니다!"}, status=status.HTTP_401_UNAUTHORIZED
+            )
 
     def delete(self, request, user_id):
         profile = User.objects.get(id=user_id)
@@ -379,10 +381,8 @@ class ProfileMyCommunityView(APIView):
         user_id = request.user.id
         profile = Profile.objects.get(user_id=user_id)
         profile_serializer = UserProfileSerializer(profile)
-        community = (
-            CommunityAdmin.objects.filter(user_id=user_id)
-            .select_related("community")
-            .all()
+        community = CommunityAdmin.objects.filter(user_id=user_id).select_related(
+            "community"
         )
         community_info = [c.community for c in community]
         community_serializer = MyCommunityInfoSerializer(community_info, many=True)
@@ -436,7 +436,7 @@ class GuestBookDetailView(APIView):
             comment.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            return Response("권한이 없습니다.", status=status.HTTP_403_FORBIDDEN)
+            return Response("권한이 없습니다.", status=status.HTTP_401_UNAUTHORIZED)
 
 
 class MyPasswordResetView(APIView):
@@ -475,9 +475,12 @@ class SearchUserView(ListAPIView):
 
     def get_queryset(self):
         communityurl = self.request.GET.get("community_url")
-        queryset = User.objects.exclude(
-            mycomu__is_comuadmin=True, mycomu__community__communityurl=communityurl
-        ).exclude(
-            mycomu__is_subadmin=True, mycomu__community__communityurl=communityurl
-        )
-        return queryset
+        if communityurl:
+            queryset = User.objects.exclude(
+                mycomu__is_comuadmin=True, mycomu__community__communityurl=communityurl
+            ).exclude(
+                mycomu__is_subadmin=True, mycomu__community__communityurl=communityurl
+            )
+            return queryset
+        else:
+            return queryset
