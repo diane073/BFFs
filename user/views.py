@@ -21,6 +21,7 @@ from rest_framework_simplejwt.views import TokenViewBase
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from .models import User, Profile, GuestBook, Verify
+from feed.models import GroupPurchase
 from .serializers import (
     UserCreateSerializer,
     UserDelSerializer,
@@ -351,9 +352,7 @@ class ProfileDetailView(APIView):
                     {"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
                 )
         else:
-            return Response(
-                {"message": "권한이 없습니다!"}, status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({"message": "권한이 없습니다!"}, status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request, user_id):
         profile = User.objects.get(id=user_id)
@@ -436,7 +435,7 @@ class GuestBookDetailView(APIView):
             comment.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            return Response("권한이 없습니다.", status=status.HTTP_401_UNAUTHORIZED)
+            return Response("권한이 없습니다.", status=status.HTTP_403_FORBIDDEN)
 
 
 class MyPasswordResetView(APIView):
@@ -475,12 +474,9 @@ class SearchUserView(ListAPIView):
 
     def get_queryset(self):
         communityurl = self.request.GET.get("community_url")
-        if communityurl:
-            queryset = User.objects.exclude(
-                mycomu__is_comuadmin=True, mycomu__community__communityurl=communityurl
-            ).exclude(
-                mycomu__is_subadmin=True, mycomu__community__communityurl=communityurl
-            )
-            return queryset
-        else:
-            return queryset
+        queryset = User.objects.exclude(
+            mycomu__is_comuadmin=True, mycomu__community__communityurl=communityurl
+        ).exclude(
+            mycomu__is_subadmin=True, mycomu__community__communityurl=communityurl
+        )
+        return queryset

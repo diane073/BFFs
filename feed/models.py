@@ -154,7 +154,7 @@ class GroupPurchase(models.Model, HitCountMixin):
     end_option = models.CharField(choices=END_CHOICES, max_length=20)
 
     community = models.ForeignKey(
-        Community, on_delete=models.CASCADE, related_name="community"
+        Community, on_delete=models.CASCADE, related_name="purchase_community"
     )
     category = models.ForeignKey(
         "feed.Category",
