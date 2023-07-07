@@ -7,8 +7,6 @@ from .views import (
     CommunityBookmarkView,
     SearchCommunityView,
     CommunityCategoryView,
-    # FeedNextView,
-    # FeedPrevView,
 )
 
 urlpatterns = [
