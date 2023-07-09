@@ -83,7 +83,7 @@
 
 <div align="center">
   <h2>🌳 BFF CI/CD</h2>
-        <img src="https://ifh.cc/g/hno3NY.png" alt="bff_CI/CD">
+        <img src="https://ifh.cc/g/x5LO1X.png" alt="bff_CI/CD">
 </div>
 
 <div align="center">
